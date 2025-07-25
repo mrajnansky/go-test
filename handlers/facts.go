@@ -24,3 +24,18 @@ func CreateFact(c *fiber.Ctx) error {
 
     return c.Status(200).JSON(fact)
 }
+
+func GetRandomFact(c *fiber.Ctx) error {
+    var fact models.Fact
+    
+    result := database.DB.Db.Order("RANDOM()").First(&fact)
+    
+    if result.Error != nil {
+        return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+            "message": "No facts found",
+            "error":   result.Error.Error(),
+        })
+    }
+
+    return c.Status(200).JSON(fact)
+}
